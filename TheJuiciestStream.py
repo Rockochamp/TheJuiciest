@@ -5,14 +5,21 @@ import requests
 from git import Repo
 import os
 
-# Get the path of the currently running script
-repo_path = os.path.dirname(os.path.abspath(__file__))
+def git_push():
+    # Get the path of the currently running script
+    repo_path = os.path.dirname(os.path.abspath(__file__))
 
-# Create a repo object
-repo = Repo(repo_path)
+    # Create a repo object
+    repo = Repo(repo_path)
 
-# Add all files in the repository to the staging area
-repo.git.add('.')
+    # Add all files in the repository to the staging area
+    repo.git.add(update=True)  # This is equivalent to `git add -u`
+
+    # Commit the changes
+    repo.git.commit('-a', '-m', 'Bot Speeches uploaded')  # The `-a` flag tells git to stage and commit all changes
+
+    # Push the changes
+    repo.git.push()
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -75,9 +82,7 @@ def chat_with_gpt3(system_behavior1, system_behavior2, start_message, num_turns)
             # Convert the text to speech and save it as an MP3 file
             text_to_speech('9kHGro8I4HpLZLYw5af1', start_message, 'bot1')
            
-            # Commit and Push the changes
-            repo.git.commit('-m', 'Bot Speeches uploaded ')
-            repo.git.push()
+            git_push()
         else:
             # It's user2's turn
             chat_log2.append({'role':'user', 'content': start_message, 'name': 'user2'})
@@ -92,10 +97,7 @@ def chat_with_gpt3(system_behavior1, system_behavior2, start_message, num_turns)
             # Convert the text to speech and save it as an MP3 file
             text_to_speech('484qCysiNIYp5zQ0Ig7v', start_message, 'bot2')
             
-            # Commit and Push the changes
-            repo.git.commit('-m', 'Bot Speeches uploaded ')
-            repo.git.push()
-
+            git_push()
 
     return combined_chat_log
 
