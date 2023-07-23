@@ -3,7 +3,16 @@ import os
 import json
 import requests
 from git import Repo
-import shutil
+import os
+
+# Get the path of the currently running script
+repo_path = os.path.dirname(os.path.abspath(__file__))
+
+# Create a repo object
+repo = Repo(repo_path)
+
+# Add all files in the repository to the staging area
+repo.git.add('.')
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -58,8 +67,13 @@ def chat_with_gpt3(system_behavior1, system_behavior2, start_message, num_turns)
             start_message = response['choices'][0]['message']['content']
             chat_log2.append({'role':'user', 'content': start_message, 'name': 'user1'})
             combined_chat_log.append({'role':'user', 'content': start_message, 'name': 'user1'})
+            
             # Convert the text to speech and save it as an MP3 file
             text_to_speech('9kHGro8I4HpLZLYw5af1', start_message)
+           
+            # Commit and Push the changes
+            repo.git.commit('-m', 'Bot Speeches uploaded ')
+            repo.git.push()
         else:
             # It's user2's turn
             chat_log2.append({'role':'user', 'content': start_message, 'name': 'user2'})
@@ -70,8 +84,14 @@ def chat_with_gpt3(system_behavior1, system_behavior2, start_message, num_turns)
             start_message = response['choices'][0]['message']['content']
             chat_log1.append({'role':'user', 'content': start_message, 'name': 'user2'})
             combined_chat_log.append({'role':'user', 'content': start_message, 'name': 'user2'})
+            
             # Convert the text to speech and save it as an MP3 file
             text_to_speech('484qCysiNIYp5zQ0Ig7v', start_message)
+            
+            # Commit and Push the changes
+            repo.git.commit('-m', 'Bot Speeches uploaded ')
+            repo.git.push()
+
 
     return combined_chat_log
 
