@@ -22,13 +22,12 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         print(f"Connected")
 
     def on_pubmsg(self, connection, event):
+        username = event.source.split('!')[0]  # Extracting the username from the event
         message = event.arguments[0]
-        print(f"Received message: {message}")  # Print every received message
-        print(f"Is question: {self.is_question(message)}")  # Print whether the message is detected as a question
-        
         if self.is_question(message):
-            self.questions.append(message)
-            print(f"Added question: {message}")
+            question_with_username = f"{username}: {message}"  # Including the username in the question
+            self.questions.append(question_with_username)
+            print(f"Added question: {question_with_username}")
 
     @staticmethod
     def is_question(message):
@@ -77,17 +76,33 @@ def chat_with_gpt3(system_behavior1, system_behavior2, start_message, num_turns,
 
     for i in range(num_turns):
         if bot.questions and random.random() < 1:
-            question = random.choice(bot.questions)
-            bot.questions.remove(question)
-            print(f"Answering Twitch question: {question}")
+            question_with_username = random.choice(bot.questions)
+            bot.questions.remove(question_with_username)
+            print(f"Answering Twitch question: {question_with_username}")
 
-            chat_log1.append({'role': 'user', 'content': question, 'name': 'TwitchUser'})
-            response = openai.ChatCompletion.create(model="gpt-4", messages=chat_log1)
+            # Determine which persona should answer (modify as needed)
+            if 'Andrew' in question_with_username:
+                responder = chat_log2
+                commenter = chat_log1
+            else:
+                responder = chat_log1
+                commenter = chat_log2
+
+            responder.append({'role': 'user', 'content': question_with_username, 'name': 'TwitchUser'})
+            response = openai.ChatCompletion.create(model="gpt-4", messages=responder)
             answer = response['choices'][0]['message']['content']
 
-            chat_log1.append({'role': 'user', 'content': answer, 'name': 'Assistant'})
-            chat_log2.append({'role': 'user', 'content': answer, 'name': 'Assistant'})
-            combined_chat_log.append({'role': 'user', 'content': answer, 'name': 'Assistant'})
+            # Add comments from the other persona
+            commenter.append({'role': 'user', 'content': answer, 'name': 'Assistant'})
+            response_comment = openai.ChatCompletion.create(model="gpt-4", messages=commenter)
+            comment = response_comment['choices'][0]['message']['content']
+
+            # Combine answer and comment
+            combined_answer = f"{answer}\n{comment}"
+
+            # Add to combined chat log
+            combined_chat_log.append({'role': 'user', 'content': combined_answer, 'name': 'Assistant'})
+
 
         if i % 2 == 0:
             chat_log1.append({'role': 'user', 'content': start_message, 'name': 'user1'})
