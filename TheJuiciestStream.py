@@ -80,19 +80,23 @@ def chat_with_gpt3(system_behavior1, system_behavior2, start_message, num_turns,
             bot.questions.remove(question_with_username)
             print(f"Answering Twitch question: {question_with_username}")
 
-            # Determine which persona should answer (modify as needed)
-            if 'Andrew' in question_with_username:
+            keywordsBot1 = ('Andrew', 'Fake', 'andrew', 'fake')
+            if any(keyword in question_with_username for keyword in keywordsBot1):
                 responder = chat_log2
                 commenter = chat_log1
-            if 'Hasan'  in question_with_username:
+            
+            keywordsBot2 = ('Hasan', 'Abibi', 'hasan', 'abibi')
+            if any(keyword in question_with_username for keyword in keywordsBot2):
                 responder = chat_log1
                 commenter = chat_log2
 
+            truncate_chat_log(responder, max_length=3)
             responder.append({'role': 'user', 'content': question_with_username, 'name': 'TwitchUser'})
             response = openai.ChatCompletion.create(model="gpt-4", messages=responder)
             answer = response['choices'][0]['message']['content']
 
             # Add comments from the other persona
+            truncate_chat_log(commenter, max_length=3)
             commenter.append({'role': 'user', 'content': answer, 'name': 'Assistant'})
             response_comment = openai.ChatCompletion.create(model="gpt-4", messages=commenter)
             comment = response_comment['choices'][0]['message']['content']
@@ -101,29 +105,42 @@ def chat_with_gpt3(system_behavior1, system_behavior2, start_message, num_turns,
             combined_answer = f"{answer}\n{comment}"
 
             # Add to combined chat log
+            truncate_chat_log(combined_chat_log, max_length=3)
             combined_chat_log.append({'role': 'user', 'content': combined_answer, 'name': 'Assistant'})
 
 
         if i % 2 == 0:
+            truncate_chat_log(chat_log1, max_length=3)
             chat_log1.append({'role': 'user', 'content': start_message, 'name': 'user1'})
             response = openai.ChatCompletion.create(model="gpt-4", messages=chat_log1)
             start_message = response['choices'][0]['message']['content']
+            truncate_chat_log(chat_log2, max_length=3)
             chat_log2.append({'role': 'user', 'content': start_message, 'name': 'user1'})
+            truncate_chat_log(combined_chat_log, max_length=3)
             combined_chat_log.append({'role': 'user', 'content': start_message, 'name': 'user1'})
             check_queue('bot1')
             text_to_speech('bot1', '9kHGro8I4HpLZLYw5af1', start_message, i // 2)
             git_push()
         else:
+            truncate_chat_log(chat_log2, max_length=3)
             chat_log2.append({'role': 'user', 'content': start_message, 'name': 'user2'})
             response = openai.ChatCompletion.create(model="gpt-4", messages=chat_log2)
             start_message = response['choices'][0]['message']['content']
+            truncate_chat_log(chat_log1, max_length=3)
             chat_log1.append({'role': 'user', 'content': start_message, 'name': 'user2'})
+            truncate_chat_log(combined_chat_log, max_length=3)
             combined_chat_log.append({'role': 'user', 'content': start_message, 'name': 'user2'})
             check_queue('bot2')
             text_to_speech('bot2', '484qCysiNIYp5zQ0Ig7v', start_message, i // 2)
             git_push()
 
     return combined_chat_log
+
+def truncate_chat_log(chat_log, max_length=3):
+    # Keep the system message and the last (max_length - 1) user messages
+    if len(chat_log) > max_length:
+        chat_log[1:] = chat_log[-(max_length - 1):]
+
 
 def main():
     # Create the TwitchBot instance
