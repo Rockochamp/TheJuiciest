@@ -44,7 +44,7 @@ def git_push():
         print("No changes to commit")
 
 def check_queue(directory):
-    while len(os.listdir(directory)) > 2:
+    while len(os.listdir(directory)) > 3:
         print(f"Waiting... {len(os.listdir(directory))} files in the queue.")
         time.sleep(1)
 
