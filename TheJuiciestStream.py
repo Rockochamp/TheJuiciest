@@ -73,7 +73,7 @@ def chat_with_gpt3(system_behavior1, system_behavior2, start_message, num_turns,
     combined_chat_log = []
 
     for i in range(num_turns):
-        if bot.questions and random.random() < 0.5:
+        if bot.questions and random.random() < 1:
             question = random.choice(bot.questions)
             bot.questions.remove(question)
             print(f"Answering Twitch question: {question}")
