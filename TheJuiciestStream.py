@@ -85,10 +85,10 @@ def chat_with_gpt3(system_behavior1, system_behavior2, start_message, num_turns,
                 responder = chat_log2
                 commenter = chat_log1
             
-            keywordsBot2 = ('Hasan', 'Abibi', 'hasan', 'abibi')
-            if any(keyword in question_with_username for keyword in keywordsBot2):
+            else:
                 responder = chat_log1
                 commenter = chat_log2
+
 
             truncate_chat_log(responder, max_length=3)
             responder.append({'role': 'user', 'content': question_with_username, 'name': 'TwitchUser'})
@@ -139,7 +139,8 @@ def chat_with_gpt3(system_behavior1, system_behavior2, start_message, num_turns,
 def truncate_chat_log(chat_log, max_length=3):
     # Keep the system message and the last (max_length - 1) user messages
     if len(chat_log) > max_length:
-        chat_log[1:] = chat_log[-(max_length - 1):]
+        chat_log[1:max_length] = chat_log[-(max_length - 1):]
+        del chat_log[max_length:]
 
 
 def main():
@@ -165,7 +166,7 @@ def main():
     system_behavior1 = personas['Hasan Abibi']
     system_behavior2 = personas['Andrew Fake']
     start_message = 'Hello, how are you?'
-    num_turns = 30
+    num_turns = 50
 
     # Pass the same bot instance to chat_with_gpt3
     combined_chat_log = chat_with_gpt3(system_behavior1, system_behavior2, start_message, num_turns, bot)
