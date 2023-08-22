@@ -23,7 +23,9 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
 
     def on_pubmsg(self, connection, event):
         message = event.arguments[0]
-        print(f"Received message: {message}")  # Debug print
+        print(f"Received message: {message}")  # Print every received message
+        print(f"Is question: {self.is_question(message)}")  # Print whether the message is detected as a question
+        
         if self.is_question(message):
             self.questions.append(message)
             print(f"Added question: {message}")
