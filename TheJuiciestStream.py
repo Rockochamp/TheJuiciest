@@ -22,6 +22,7 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
 
     def on_pubmsg(self, connection, event):
         message = event.arguments[0]
+        print(f"Received message: {message}")  # Debug print
         if self.is_question(message):
             self.questions.append(message)
             print(f"Added question: {message}")
@@ -72,7 +73,7 @@ def chat_with_gpt3(system_behavior1, system_behavior2, start_message, num_turns,
     combined_chat_log = []
 
     for i in range(num_turns):
-        if bot.questions and random.random() < 0.1:
+        if bot.questions and random.random() < 0.5:
             question = random.choice(bot.questions)
             bot.questions.remove(question)
             print(f"Answering Twitch question: {question}")
@@ -110,7 +111,7 @@ def main():
     def run_twitch_bot():
         username = 'rockochamp'
         token = os.getenv("TWITCH_OAUTH_TOKEN")
-        channel = 'rockochamp'
+        channel = 'Rockochamp'
 
         bot = TwitchBot(username, token, channel)
         bot.start()
