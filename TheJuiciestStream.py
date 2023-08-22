@@ -19,6 +19,7 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
 
     def on_welcome(self, connection, event):
         connection.join(self.channel)
+        print(f"Connected")
 
     def on_pubmsg(self, connection, event):
         message = event.arguments[0]
@@ -119,7 +120,7 @@ def main():
     twitch_bot_thread = Thread(target=run_twitch_bot)
     twitch_bot_thread.start()
 
-    bot = TwitchBot('rockochamp', os.getenv("TWITCH_OAUTH_TOKEN"), 'rockochamp')
+    bot = TwitchBot('rockochamp', os.getenv("TWITCH_OAUTH_TOKEN"), 'Rockochamp')
 
     openai.api_key = os.getenv("OPENAI_API_KEY")
 
