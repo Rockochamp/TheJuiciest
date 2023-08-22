@@ -8,9 +8,12 @@ import time
 def git_push():
     repo_path = os.path.dirname(os.path.abspath(__file__))
     repo = Repo(repo_path)
-    repo.git.add(update=True)
-    repo.git.commit('-a', '-m', 'Bot Speeches uploaded')
-    repo.git.push()
+    repo.git.add(A=True)  # This is equivalent to `git add -A`
+    if repo.is_dirty():
+        repo.git.commit('-m', 'Bot Speeches uploaded')
+        repo.git.push()
+    else:
+        print("No changes to commit")
 
 def check_queue(directory):
     while len(os.listdir(directory)) > 1:
