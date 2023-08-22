@@ -165,7 +165,7 @@ def main():
     system_behavior1 = personas['Hasan Abibi']
     system_behavior2 = personas['Andrew Fake']
     start_message = 'Hello, how are you?'
-    num_turns = 6
+    num_turns = 20
 
     # Pass the same bot instance to chat_with_gpt3
     combined_chat_log = chat_with_gpt3(system_behavior1, system_behavior2, start_message, num_turns, bot)
