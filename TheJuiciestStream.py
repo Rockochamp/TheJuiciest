@@ -111,18 +111,19 @@ def chat_with_gpt3(system_behavior1, system_behavior2, start_message, num_turns,
     return combined_chat_log
 
 def main():
-    def run_twitch_bot():
-        username = 'rockochamp'
-        token = os.getenv("TWITCH_OAUTH_TOKEN")
-        channel = 'Rockochamp'
+    # Create the TwitchBot instance
+    bot = TwitchBot('rockochamp', os.getenv("TWITCH_OAUTH_TOKEN"), 'Rockochamp')
 
-        bot = TwitchBot(username, token, channel)
+    # Define the threaded function to run the bot
+    def run_twitch_bot():
         bot.start()
 
+    # Start the threaded function
     twitch_bot_thread = Thread(target=run_twitch_bot)
     twitch_bot_thread.start()
 
-    bot = TwitchBot('rockochamp', os.getenv("TWITCH_OAUTH_TOKEN"), 'Rockochamp')
+    # Wait a bit to ensure the bot has connected (adjust as needed)
+    time.sleep(5)
 
     openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -134,6 +135,7 @@ def main():
     start_message = 'Hello, how are you?'
     num_turns = 100
 
+    # Pass the same bot instance to chat_with_gpt3
     combined_chat_log = chat_with_gpt3(system_behavior1, system_behavior2, start_message, num_turns, bot)
 
     for message in combined_chat_log:
