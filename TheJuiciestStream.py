@@ -53,8 +53,8 @@ def chat_with_gpt3(system_behavior1, system_behavior2, start_message, num_turns)
             start_message = response['choices'][0]['message']['content']
             chat_log2.append({'role':'user', 'content': start_message, 'name': 'user1'})
             combined_chat_log.append({'role':'user', 'content': start_message, 'name': 'user1'})
-            text_to_speech('bot1', '9kHGro8I4HpLZLYw5af1', start_message, i // 2)
             check_queue('bot1')
+            text_to_speech('bot1', '9kHGro8I4HpLZLYw5af1', start_message, i // 2)
             git_push()
         else:
             chat_log2.append({'role':'user', 'content': start_message, 'name': 'user2'})
@@ -62,8 +62,8 @@ def chat_with_gpt3(system_behavior1, system_behavior2, start_message, num_turns)
             start_message = response['choices'][0]['message']['content']
             chat_log1.append({'role':'user', 'content': start_message, 'name': 'user2'})
             combined_chat_log.append({'role':'user', 'content': start_message, 'name': 'user2'})
-            text_to_speech('bot2', '484qCysiNIYp5zQ0Ig7v', start_message, i // 2)
             check_queue('bot2')
+            text_to_speech('bot2', '484qCysiNIYp5zQ0Ig7v', start_message, i // 2)
             git_push()
 
     return combined_chat_log
