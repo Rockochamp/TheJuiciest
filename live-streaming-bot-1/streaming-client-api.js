@@ -89,7 +89,7 @@ talkButton.onclick = async () => {
         },
         driver_url: 'bank://lively/',
         config: {
-          stitch: true,
+          stitch: ture,
         },
         session_id: sessionId,
       }),
