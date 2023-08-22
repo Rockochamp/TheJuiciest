@@ -20,7 +20,7 @@ def check_queue(directory):
         print(f"Waiting... {len(os.listdir(directory))} files in the queue.")
         time.sleep(5)
 
-def text_to_speech(voice_id, text, directory, turn):
+def text_to_speech(label, voice_id, text, turn):
     data = {
         "text": text,
         "model_id": "eleven_monolingual_v1",
@@ -34,9 +34,9 @@ def text_to_speech(voice_id, text, directory, turn):
         "Content-Type": "application/json",
         "xi-api-key": os.getenv("ELEVENLABS_API_KEY")
     })
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-    with open(os.path.join(directory, f"{voice_id}_{turn}.mp3"), 'wb') as f:
+    if not os.path.exists(label):
+        os.makedirs(label)
+    with open(os.path.join(label, f"{label}_{turn}.mp3"), 'wb') as f:
         for chunk in response.iter_content(chunk_size=1024):
             if chunk:
                 f.write(chunk)
@@ -53,7 +53,7 @@ def chat_with_gpt3(system_behavior1, system_behavior2, start_message, num_turns)
             start_message = response['choices'][0]['message']['content']
             chat_log2.append({'role':'user', 'content': start_message, 'name': 'user1'})
             combined_chat_log.append({'role':'user', 'content': start_message, 'name': 'user1'})
-            text_to_speech('bot1', start_message, 'bot1', i // 2)
+            text_to_speech('bot1', '9kHGro8I4HpLZLYw5af1', start_message, i // 2)
             check_queue('bot1')
             git_push()
         else:
@@ -62,7 +62,7 @@ def chat_with_gpt3(system_behavior1, system_behavior2, start_message, num_turns)
             start_message = response['choices'][0]['message']['content']
             chat_log1.append({'role':'user', 'content': start_message, 'name': 'user2'})
             combined_chat_log.append({'role':'user', 'content': start_message, 'name': 'user2'})
-            text_to_speech('bot2', start_message, 'bot2', i // 2)
+            text_to_speech('bot2', '484qCysiNIYp5zQ0Ig7v', start_message, i // 2)
             check_queue('bot2')
             git_push()
 
