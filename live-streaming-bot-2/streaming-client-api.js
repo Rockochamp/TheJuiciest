@@ -72,10 +72,13 @@ connectButton.onclick = async () => {
   });
 };
 
+let audioCounter = 0; // Counter to keep track of the current audio file
+
 const talkButton = document.getElementById('talk-button');
 talkButton.onclick = async () => {
   // connectionState not supported in firefox
   if (peerConnection?.signalingState === 'stable' || peerConnection?.iceConnectionState === 'connected') {
+    const audioUrl = `https://github.com/Rockochamp/TheJuiciest/raw/main/bot2/bot2_${audioCounter}.mp3`; // Build the URL dynamically
     const talkResponse = await fetchWithRetries(`${DID_API.url}/talks/streams/${streamId}`, {
       method: 'POST',
       headers: {
@@ -85,7 +88,7 @@ talkButton.onclick = async () => {
       body: JSON.stringify({
         script: {
           type: 'audio',
-          audio_url: 'https://github.com/Rockochamp/Stuff/raw/main/484qCysiNIYp5zQ0Ig7v.mp3',
+          audio_url: audioUrl, // Use the dynamic URL
         },
         driver_url: 'bank://lively/',
         config: {
@@ -94,6 +97,8 @@ talkButton.onclick = async () => {
         session_id: sessionId,
       }),
     });
+
+    audioCounter++; // Increment the counter for the next click
   }
 };
 
